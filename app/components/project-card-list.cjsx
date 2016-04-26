@@ -187,22 +187,22 @@ PageSelector = React.createClass
 ProjectStateSelector = React.createClass
   displayName: ProjectStateSelector
 
-  fetchLiveProjects: ->
-
+  handleChange: (event) ->
+    @props.onChange event.target.value
 
   render: ->
     <div>
       <label>
         Live
-        <input type="radio" onClick={} />
+        <input type="radio" name="project-state" value="live" onClick={@handleChange} />
       </label>
       <label>
         Paused
-        <input type="radio" onClick={} />
+        <input type="radio" name="project-state" value="paused" onClick={@handleChange} />
       </label>
       <label>
         Finished
-        <input type="radio" onClick={console.log('finished')} />
+        <input type="radio" name="project-state" value="finished" onClick={@handleChange} />
       </label>
     </div>
 
@@ -273,11 +273,11 @@ ProjectFilteringInterface = React.createClass
   handlePageChange: (page) ->
     this.props.onChangeQuery {page}
 
-  handleStateSortChange: (projectState) ->
+  handleStateFilterChange: (projectState) ->
     page = 1
-    @props.onChangeQuery {projectState, page}
-
-  setFilter: (e) ->
+    query = { page }
+    query[projectState] = true
+    @props.onChangeQuery query
 
   render: ->
     <div className="secondary-page all-resources-page">
@@ -290,7 +290,7 @@ ProjectFilteringInterface = React.createClass
 
       <section className="resources-container">
         <DisciplineSelector value={@props.discipline} onChange={@handleDisciplineChange} />
-        <ProjectStateSelector onChange={@hanldeStateSortChange} />
+        <ProjectStateSelector onChange={@handleStateFilterChange} />
         <div className="resource-results-counter">
           <SearchSelector />
           <SortSelector value={@props.sort} onChange={@handleSortChange} />
