@@ -182,6 +182,8 @@ ProjectStatus = React.createClass
           <li>Beta Approved: <ProjectToggle project={@props.project} field="beta_approved" /></li>
           <li>Launch Requested: <ProjectToggle project={@props.project} field="launch_requested" /></li>
           <li>Launch Approved: <ProjectToggle project={@props.project} field="launch_approved" /></li>
+          <li>Paused: <ProjectToggle project={@props.project} field="paused" /></li>
+          <li>Finished: <ProjectToggle project={@props.project} field="finished" /></li>
         </ul>
         <h4>Project Redirect</h4>
         <ProjectRedirectToggle project={@props.project} />
