@@ -56,6 +56,7 @@ module.exports = React.createClass
       </label>
 
       <p className="form-help">Workflows can be edited during development, and subjects will never retire. In a live project, workflows are locked and can no longer be edited, and classifications count toward subject retirement.</p>
+      
 
       <div style={looksDisabled if @props.project.private or not @props.project.live}>
         <hr />
@@ -122,5 +123,13 @@ module.exports = React.createClass
             <p className="form-help">Pending approval, expose this project to the entire Zooniverse through the main projects listing.</p>}
 
         </div>
+      </div>
+      <hr />
+      <div style={looksDisabled unless @props.project.live}>
+        <p>
+          <button type="button" className="standard-button" onClick={console.log("Finished Project Button")} disabled={not @props.project.live}>Finished</button>
+        <span> Only <strong>live projects</strong> can be finished.</span>
+        </p>
+        <p className="form-help">Marking a project as finished tells volunteers that the goals of the project have been finished. Only set this if you are not planning on uploading more subjects to this project.</p>
       </div>
     </div>

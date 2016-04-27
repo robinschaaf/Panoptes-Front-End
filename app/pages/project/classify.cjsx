@@ -8,6 +8,7 @@ apiClient = require 'panoptes-client/lib/api-client'
 animatedScrollTo = require 'animated-scrollto'
 counterpart = require 'counterpart'
 FinishedBanner = require './finished-banner'
+ProjectStateBanner = require './project-state-banner'
 Classifier = require '../../classifier'
 alert = require '../../lib/alert'
 SignInPrompt = require '../../partials/sign-in-prompt'
@@ -206,7 +207,9 @@ module.exports = React.createClass
 
   render: ->
     <div className="classify-page content-container">
-      {if @state.projectIsComplete
+      {if @props.project.paused or @props.project.finished
+        <ProjectStateBanner project={@props.project} />
+      else if @state.projectIsComplete
         <FinishedBanner project={@props.project} />}
 
       {if @state.classification?

@@ -4,6 +4,7 @@ HandlePropChanges = require '../../lib/handle-prop-changes'
 PromiseToSetState = require '../../lib/promise-to-set-state'
 PromiseRenderer = require '../../components/promise-renderer'
 FinishedBanner = require './finished-banner'
+ProjectStateBanner = require './project-state-banner'
 ProjectMetadata = require './metadata'
 {Link} = require 'react-router'
 
@@ -33,7 +34,12 @@ module.exports = React.createClass
 
     <div className="project-home-page">
       <div className="call-to-action-container content-container">
-        <FinishedBanner project={@props.project} />
+        {if @props.project.paused? or @props.project.finished?
+          <ProjectStateBanner project={@props.project} />
+        else
+          <FinishedBanner project={@props.project} />
+        }
+        
 
         <div className="description">{@props.project.description}</div>
         {if @props.project.workflow_description? and @props.project.workflow_description isnt ''
