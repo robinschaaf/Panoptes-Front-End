@@ -185,12 +185,13 @@ PageSelector = React.createClass
     </nav>
 
 ProjectStateSelector = React.createClass
-  displayName: ProjectStateSelector
+  displayName: 'ProjectStateSelector'
 
   handleChange: (event) ->
     @props.onChange event.target.value
 
   render: ->
+    # TODO: Let the input set the project paused and finished field
     <div>
       <label>
         Live

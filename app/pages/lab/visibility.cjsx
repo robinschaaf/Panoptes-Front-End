@@ -58,6 +58,15 @@ module.exports = React.createClass
       <p className="form-help">Workflows can be edited during development, and subjects will never retire. In a live project, workflows are locked and can no longer be edited, and classifications count toward subject retirement.</p>
       
 
+      <hr />
+      {# TODO: 1. Toggle button for pausing a project. 2. Alert the user to any active workflows -- double check confirmation. }
+      <div style={looksDisabled unless @props.project.live}>
+        <p>
+          <button type="button" className="standard-button" onClick={console.log("Paused Project Button")} disabled={not @props.project.live}>Paused</button>
+        <span> Only <strong>live projects</strong> can be paused.</span>
+        </p>
+        <p className="form-help">Marking a project as paused tells volunteers that this project is temporarily on hold and will be active at a later point.</p>
+      </div>
       <div style={looksDisabled if @props.project.private or not @props.project.live}>
         <hr />
 
@@ -125,6 +134,7 @@ module.exports = React.createClass
         </div>
       </div>
       <hr />
+      {# TODO: 1. Alert to confirm that the owner wants to finish the project. 2. UI indication of the state change and contact the Zooniverse if you want to active. }
       <div style={looksDisabled unless @props.project.live}>
         <p>
           <button type="button" className="standard-button" onClick={console.log("Finished Project Button")} disabled={not @props.project.live}>Finished</button>
