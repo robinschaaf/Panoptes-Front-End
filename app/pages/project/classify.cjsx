@@ -95,16 +95,12 @@ module.exports = React.createClass
     @context.geordi?.forget ['workflowID']
 
   componentWillReceiveProps: (nextProps) ->
+    # Only for Gravity Spy which is using Nero to assign workflows and logged in users
     if @props.project.experimental_tools.indexOf 'nero workflow assignment' > -1 and @props.user?
-      console.log('nero workflow assignment and user')
-      # We don't want to prompt if the current or next preferences are null or undefined
-      if @props.preferences?.preferences? and nextProps.preferences?.preferences? 
-        currentWorkflow = @props.preferences.preferences.selected_workflow
-        nextWorkflow = nextProps.preferences.preferences.selected_workflow
-        if nextWorkflow isnt currentWorkflow
-          console.log('nextProps isnt', nextProps)
+      if nextProps.preferences? # We don't want to do anything on null preferences
+        if nextProps.preferences.preferences.selected_workflow isnt @props.location.query.workflow
           @setState promptWorkflowAssignmentDialog: true
-            
+
   loadAppropriateClassification: (_, props = @props) ->
     # To load the right classification, we'll need to know which workflow the user expects.
     # console.log 'Loading appropriate classification'
@@ -341,21 +337,13 @@ module.exports = React.createClass
     if classificationsThisSession % PROMPT_MINI_COURSE_EVERY is 0
       MiniCourse.startIfNecessary {workflow: @state.workflow, preferences: @props.preferences, project: @props.project, user: @props.user}
 
-  maybePromptWorkflowAssignmentDialog: ->
-    console.log('maybePrompt upcomingSubjects', upcomingSubjects)
+  maybePromptWorkflowAssignmentDialog: (nextWorkflow) ->
     if @state.promptWorkflowAssignmentDialog
-      console.log 'change workflow'
-      # Dialog.alert(
-      #   <WorkflowAssignmentDialog />, {
-      #   className: 'workflow-assignment-dialog',
-      #   required: true,
-      #   closeButton: false,
-      #   onCancel: @handleOnCancel.bind(null, currentWorkflowID, preferences)
-      # })
-      #   .catch =>
-      #     console.error('something went wrong with the dialog alert')
-      
-        # .then -> @setState promptWorkflowAssignmentDialog: false
+      WorkflowAssignmentDialog.start(@props.history, @props.location, @props.preferences)
+        .then =>
+          @setState promptWorkflowAssignmentDialog: false
+        .then =>  
+          @loadAppropriateClassification()
                
 # For debugging:
 window.currentWorkflowForProject = currentWorkflowForProject
