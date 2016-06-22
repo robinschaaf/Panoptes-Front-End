@@ -10,7 +10,7 @@ counterpart.registerTranslations 'en',
     nav:
       accountInformation: "Account Information"
       customizeProfile: "Customize Profile"
-      email: "Email"
+      email: "Email & Project"
 
 UserSettingsPage = React.createClass
   displayName: 'UserSettingsPage'
