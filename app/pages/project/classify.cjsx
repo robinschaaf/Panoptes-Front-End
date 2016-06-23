@@ -95,10 +95,13 @@ module.exports = React.createClass
     @context.geordi?.forget ['workflowID']
 
   componentWillReceiveProps: (nextProps) ->
+    console.log('nextProps', nextProps)
     # Only for Gravity Spy which is using Nero to assign workflows and logged in users
     if @props.project.experimental_tools.indexOf 'nero workflow assignment' > -1 and @props.user?
       if nextProps.preferences? # We don't want to do anything on null preferences
+        console.log('there are preferences!')
         if nextProps.preferences.preferences.selected_workflow isnt @props.location.query.workflow
+          console.log('props dont match')
           @setState promptWorkflowAssignmentDialog: true
 
   loadAppropriateClassification: (_, props = @props) ->
@@ -339,6 +342,7 @@ module.exports = React.createClass
 
   maybePromptWorkflowAssignmentDialog: (nextWorkflow) ->
     if @state.promptWorkflowAssignmentDialog
+      console.log('WorkflowAssignmentDialog', WorkflowAssignmentDialog)
       WorkflowAssignmentDialog.start(@props.history, @props.location, @props.preferences)
         .then =>
           @setState promptWorkflowAssignmentDialog: false

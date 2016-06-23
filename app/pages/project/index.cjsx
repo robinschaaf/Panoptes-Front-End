@@ -255,7 +255,10 @@ ProjectPageController = React.createClass
     @fetchProjectData @props.params.owner, @props.params.name, @props.user
       .then =>
         # For testing! Simulating a new assignment coming in from Nero after some time.
-        setTimeout ( => @state.preferences.update "preferences.selected_workflow": '2334' ), 5000
+        setTimeout ( => 
+          console.log('timeout')
+          @state.preferences.update "preferences.selected_workflow": '2334' 
+        ), 5000
 
   componentWillReceiveProps: (nextProps) ->
     {owner, name} = nextProps.params
