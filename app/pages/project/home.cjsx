@@ -21,7 +21,7 @@ module.exports = React.createClass
       if project._workflows?
         @setState workflows: project._workflows
       else
-        workflows = getWorkflowsInOrder project, {active: true, fields: 'display_name'}
+        workflows = getWorkflowsInOrder project, {active: true, fields: 'display_name,configuration'}
 
         workflows.then (workflows) =>
           project._workflows = workflows
@@ -50,16 +50,36 @@ module.exports = React.createClass
             <small>at {@props.project.redirect}</small>
           </a>
         else if @props.project.configuration?.user_chooses_workflow
-          @state.workflows.map (workflow) =>
-            <Link
-              to={"/projects/#{@props.project.slug}/classify"}
-              query={workflow: workflow.id}
-              key={workflow.id + Math.random()}
-              className="call-to-action standard-button"
-              onClick={@handleWorkflowSelection.bind this, workflow}
-            >
-              {workflow.display_name}
-            </Link>
+          # For Gravity Spy
+          if @props.project.experimental_tools.indexOf 'workflow assignment' > -1 and @props.user?
+            currentLevel = @state.workflows.filter (workflow) ->
+              if workflow.id is @props.preferences.settings.workflow_id and workflow.configuration.level?
+                workflow.configuration.level
+              else
+                "1" # Start at beginner
+
+            for workflow in @state.workflows
+              if workflow.configuration.level <= currentLevel and workflow.configuration.level?
+                <Link
+                  to={"/projects/#{@props.project.slug}/classify"}
+                  query={workflow: workflow.id}
+                  key={workflow.id + Math.random()}
+                  className="call-to-action standard-button"
+                  onClick={@handleWorkflowSelection.bind this, workflow}
+                >
+                  {workflow.display_name}
+                </Link>
+          else
+            @state.workflows.map (workflow) =>
+              <Link
+                to={"/projects/#{@props.project.slug}/classify"}
+                query={workflow: workflow.id}
+                key={workflow.id + Math.random()}
+                className="call-to-action standard-button"
+                onClick={@handleWorkflowSelection.bind this, workflow}
+              >
+                {workflow.display_name}
+              </Link>
         else
           <Link to={"/projects/#{@props.project.slug}/classify"} className="call-to-action standard-button">
             Get started!

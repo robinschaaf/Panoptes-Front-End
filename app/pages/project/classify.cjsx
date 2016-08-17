@@ -97,7 +97,7 @@ module.exports = React.createClass
   componentWillReceiveProps: (nextProps) ->
     console.log('nextProps', nextProps)
     # Only for Gravity Spy which is using Nero to assign workflows and logged in users
-    if @props.project.experimental_tools.indexOf 'nero workflow assignment' > -1 and @props.user?
+    if @props.project.experimental_tools.indexOf 'workflow assignment' > -1 and @props.user?
       if nextProps.preferences? # We don't want to do anything on null preferences
         console.log('there are preferences!')
         if nextProps.preferences.preferences.settings.workflow_id isnt @props.location.query.workflow

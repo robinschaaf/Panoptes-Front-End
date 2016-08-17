@@ -13,29 +13,34 @@ export default class WorkflowAssignmentDialog extends React.Component {
   }
 
   static handleNewWorklfowAssignment(history, location, preferences) {
+    preferences.update({ 'preferences.selected_workflow': preferences.settings.workflow_id });
+    preferences.save();
     return history.replace({
       pathname: location.pathname,
-      search: `?workflow=${preferences.preferences.selected_workflow}`,
+      search: `?workflow=${preferences.settings.workflow_id}`,
     });
   }
 
   static handleStayOnCurrentWorkflowAssignment(location, preferences) {
     // Switch user back to workflow in query rather than nero assigned workflow
     // TODO: Maybe if user selects after 3 prompts, opt out?
-    preferences.update({ 'preferences.selected_workflow': location.query.workflow });
-    return preferences.save();
+    if (preferences.selected_workflow === undefined || preferences.selected_workflow === null) {
+      preferences.update({ 'preferences.selected_workflow': location.query.workflow });
+      return preferences.save();
+    }
+
+    return null;
   }
 
   render() {
     return (
       <div className="content-container">
         <p>
-          You've done a great job classifying.
-          We'd like to recommend a more advanced task workflow for you to try out.
-        </p>
-        <p>
-          You now have a setting in your profile if you change your mind
-          want to change which workflow you are on later.
+          Congratulations! Because you're doing so well, you can level up and
+          access more types of glitches, have more options for classifying them,
+          and see glitches that our computer algorithms are even less confident in.
+          If you prefer to stay at this level, you can choose to stay. You can switch
+          back to a previous workflow from the project home page.
         </p>
         <button type="submit">Try the new workflow</button>
       </div>

@@ -262,10 +262,10 @@ ProjectPageController = React.createClass
     @_boundForceUpdate = @forceUpdate.bind this
     @fetchProjectData @props.params.owner, @props.params.name, @props.user
       .then =>
-        # For testing! Simulating a new assignment coming in from Nero after some time.
+        # For testing! Simulating a new assignment coming in after some time.
         setTimeout ( => 
           console.log('timeout')
-          @state.preferences.update "preferences.selected_workflow": '2334' 
+          @state.preferences.update "settings.workflow_id": '2334' 
         ), 5000
 
   componentWillReceiveProps: (nextProps) ->
