@@ -100,7 +100,7 @@ module.exports = React.createClass
     if @props.project.experimental_tools.indexOf 'workflow assignment' > -1 and @props.user?
       if nextProps.preferences? # We don't want to do anything on null preferences
         console.log('there are preferences!')
-        if nextProps.preferences.preferences.settings.workflow_id isnt @props.location.query.workflow
+        if nextProps.preferences.preferences.settings?.workflow_id isnt @props.location.query.workflow and @state.promptWorkflowAssignmentDialog is false
           console.log('props dont match')
           @setState promptWorkflowAssignmentDialog: true
 
@@ -343,8 +343,9 @@ module.exports = React.createClass
   maybePromptWorkflowAssignmentDialog: (nextWorkflow) ->
     if @state.promptWorkflowAssignmentDialog
       console.log('WorkflowAssignmentDialog', WorkflowAssignmentDialog)
-      WorkflowAssignmentDialog.start(@props.history, @props.location, @props.preferences)
+      WorkflowAssignmentDialog.default.start(@props.history, @props.location, @props.preferences)
         .then =>
+          console.log('start promise')
           @setState promptWorkflowAssignmentDialog: false
         .then =>  
           @loadAppropriateClassification()

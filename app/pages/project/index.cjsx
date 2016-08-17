@@ -72,11 +72,13 @@ ProjectPage = React.createClass
 
   componentWillReceiveProps: (nextProps) ->
     if nextProps.project isnt @props.project
+      console.log('nextproject')
       @fetchInfo nextProps.project
       @getSelectedWorkflow nextProps.project, nextProps.preferences
       @updateSugarSubscription nextProps.project
       @context.geordi?.remember projectToken: nextProps.project?.slug
-    else if nextProps.preferences?.preferences.selected_workflow isnt @state.selectedWorkflow?.id
+    else if nextProps.preferences?.preferences.selected_workflow isnt @state.selectedWorkflow?.id and @state.selectedWorkflow?
+      console.log('selected_workflow')
       @getSelectedWorkflow nextProps.project, nextProps.preferences
 
   fetchInfo: (project) ->
@@ -107,17 +109,20 @@ ProjectPage = React.createClass
     @setState selectedWorkflow: 'PENDING'
 
     # preference user selected workflow, then project owner set workflow, then default workflow
-    preferredWorkflowID = preferences?.preferences.selected_workflow ? preferences?.settings.workflow_id ? project.configuration?.default_workflow
-    # if preferences?.preferences.selected_workflow 
-    #   preferredWorkflowID = preferences?.preferences.selected_workflow
-    # else if preferences?.settings.workflow_id
-    #   preferredWorkflowID = preferences?.settings.workflow_id
-    # else if project.configuration?.default_workflow 
-    #   preferredWorkflowID = project.configuration?.default_workflow
+    # preferredWorkflowID = preferences?.preferences.selected_workflow ? preferences?.settings.workflow_id ? project.configuration?.default_workflow
+    preferredWorkflowID = null
+    if preferences?.preferences.selected_workflow 
+      preferredWorkflowID = preferences?.preferences.selected_workflow
+    else if preferences?.settings.workflow_id
+      preferredWorkflowID = preferences?.settings.workflow_id
+    else if project.configuration?.default_workflow 
+      preferredWorkflowID = project.configuration?.default_workflow
 
+    console.log('preferredWorkflowID', preferredWorkflowID)
     if preferredWorkflowID?
-      apiClient.type('workflows').get preferredWorkflowID
+      apiClient.type('workflows').get preferredWorkflowID, {}
         .then (workflow) =>
+          console.log('workflow', workflow)
           if workflow.active
             @setState selectedWorkflow: workflow
           else

@@ -48,11 +48,13 @@ Classifier = React.createClass
     @prepareToClassify @props.classification
     {workflow, project, user} = @props
     Tutorial.startIfNecessary {workflow, user}
+    console.log('cdm')
 
   componentWillReceiveProps: (nextProps) ->
     if nextProps.project isnt @props.project or nextProps.user isnt @props.user
       {workflow, project, user} = nextProps
       Tutorial.startIfNecessary {workflow, user}
+      console.log('cwrp')
     if nextProps.subject isnt @props.subject
       @loadSubject subject
     if nextProps.classification isnt @props.classification
