@@ -13,7 +13,7 @@ seenThisSession = require '../../lib/seen-this-session'
 MiniCourse = require '../../lib/mini-course'
 getWorkflowsInOrder = require '../../lib/get-workflows-in-order'
 Dialog = require 'modal-form/dialog'
-WorkflowAssignmentDialog = require '../../components/workflow-assignment-dialog'
+`import WorkflowAssignmentDialog from '../../components/workflow-assignment-dialog'`
 
 FAILED_CLASSIFICATION_QUEUE_NAME = 'failed-classifications'
 
@@ -95,14 +95,14 @@ module.exports = React.createClass
     @context.geordi?.forget ['workflowID']
 
   componentWillReceiveProps: (nextProps) ->
-    console.log('nextProps', nextProps)
-    # Only for Gravity Spy which is using Nero to assign workflows and logged in users
+    @shouldWorkflowAssignmentPrompt(nextProps.preferences)
+
+  shouldWorkflowAssignmentPrompt: (preferences) ->
+    # Only for Gravity Spy which is assigning workflows to logged in users
+    assignedWorkflowID = preferences?.settings?.workflow_id
     if @props.project.experimental_tools.indexOf 'workflow assignment' > -1 and @props.user?
-      if nextProps.preferences? # We don't want to do anything on null preferences
-        console.log('there are preferences!')
-        if nextProps.preferences.preferences.settings?.workflow_id isnt @props.location.query.workflow and @state.promptWorkflowAssignmentDialog is false
-          console.log('props dont match')
-          @setState promptWorkflowAssignmentDialog: true
+      if assignedWorkflowID? and assignedWorkflowID isnt @props.location.query.workflow
+        @setState promptWorkflowAssignmentDialog: true if @state.promptWorkflowAssignmentDialog is false
 
   loadAppropriateClassification: (_, props = @props) ->
     # To load the right classification, we'll need to know which workflow the user expects.
@@ -115,7 +115,7 @@ module.exports = React.createClass
 
   getCurrentWorkflow: (props = @props) ->
     if props.location.query?.workflow?
-      # console.log 'Workflow specified as', props.query.workflow
+      # console.log 'Workflow specified as', props.location.query.workflow
       # Prefer the workflow specified in the query.
       @getWorkflow props.project, props.location.query.workflow
     else
@@ -342,13 +342,18 @@ module.exports = React.createClass
 
   maybePromptWorkflowAssignmentDialog: (nextWorkflow) ->
     if @state.promptWorkflowAssignmentDialog
-      console.log('WorkflowAssignmentDialog', WorkflowAssignmentDialog)
-      WorkflowAssignmentDialog.default.start(@props.history, @props.location, @props.preferences)
+      WorkflowAssignmentDialog.start(@props.history, @props.location, @props.preferences)
         .then =>
-          console.log('start promise')
-          @setState promptWorkflowAssignmentDialog: false
-        .then =>  
-          @loadAppropriateClassification()
+          @loadAnotherSubject()
+
+          if @props.location.query.workflow isnt @props.preferences.preferences.selected_workflow
+            @props.preferences.update({ 'preferences.selected_workflow': @props.preferences.settings.workflow_id });
+            @props.preferences.save()
+              .then =>
+                @setState promptWorkflowAssignmentDialog: false
+          else
+            @setState promptWorkflowAssignmentDialog: false
+
                
 # For debugging:
 window.currentWorkflowForProject = currentWorkflowForProject

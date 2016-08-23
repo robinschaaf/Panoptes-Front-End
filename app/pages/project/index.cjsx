@@ -72,14 +72,12 @@ ProjectPage = React.createClass
 
   componentWillReceiveProps: (nextProps) ->
     if nextProps.project isnt @props.project
-      console.log('nextproject')
       @fetchInfo nextProps.project
       @getSelectedWorkflow nextProps.project, nextProps.preferences
       @updateSugarSubscription nextProps.project
       @context.geordi?.remember projectToken: nextProps.project?.slug
-    else if nextProps.preferences?.preferences.selected_workflow isnt @state.selectedWorkflow?.id and @state.selectedWorkflow?
-      console.log('selected_workflow')
-      @getSelectedWorkflow nextProps.project, nextProps.preferences
+    else if nextProps.preferences?.preferences.selected_workflow isnt @state.selectedWorkflow?.id
+      @getSelectedWorkflow(nextProps.project, nextProps.preferences)
 
   fetchInfo: (project) ->
     @setState
@@ -109,8 +107,6 @@ ProjectPage = React.createClass
     @setState selectedWorkflow: 'PENDING'
 
     # preference user selected workflow, then project owner set workflow, then default workflow
-    # preferredWorkflowID = preferences?.preferences.selected_workflow ? preferences?.settings.workflow_id ? project.configuration?.default_workflow
-    preferredWorkflowID = null
     if preferences?.preferences.selected_workflow 
       preferredWorkflowID = preferences?.preferences.selected_workflow
     else if preferences?.settings.workflow_id
@@ -118,11 +114,9 @@ ProjectPage = React.createClass
     else if project.configuration?.default_workflow 
       preferredWorkflowID = project.configuration?.default_workflow
 
-    console.log('preferredWorkflowID', preferredWorkflowID)
     if preferredWorkflowID?
       apiClient.type('workflows').get preferredWorkflowID, {}
         .then (workflow) =>
-          console.log('workflow', workflow)
           if workflow.active
             @setState selectedWorkflow: workflow
           else
@@ -266,12 +260,12 @@ ProjectPageController = React.createClass
   componentDidMount: ->
     @_boundForceUpdate = @forceUpdate.bind this
     @fetchProjectData @props.params.owner, @props.params.name, @props.user
-      .then =>
-        # For testing! Simulating a new assignment coming in after some time.
-        setTimeout ( => 
-          console.log('timeout')
-          @state.preferences.update "settings.workflow_id": '2334' 
-        ), 5000
+      # .then =>
+      #   # For testing! Simulating a new assignment coming in after some time.
+      #   setTimeout ( => 
+      #     console.log('set selected workfow')
+      #     @state.preferences.update "preferences.selected_workflow": '2333'
+      #   ), 5000
 
   componentWillReceiveProps: (nextProps) ->
     {owner, name} = nextProps.params

@@ -60,25 +60,6 @@ module.exports = React.createClass
             >
               {workflow.display_name}
             </Link>
-        # For Gravity Spy
-        else if @props.project.experimental_tools.indexOf 'workflow assignment' > -1 and @props.user?
-          currentLevel = @state.workflows.filter (workflow) ->
-            if workflow.id is @props.preferences.settings.workflow_id and workflow.configuration.level?
-              workflow.configuration.level
-            else
-              "1" # Start at beginner
-
-          for workflow in @state.workflows
-            if workflow.configuration.level <= currentLevel and workflow.configuration.level?
-              <Link
-                to={"/projects/#{@props.project.slug}/classify"}
-                query={workflow: workflow.id}
-                key={workflow.id + Math.random()}
-                className="call-to-action standard-button"
-                onClick={@handleWorkflowSelection.bind this, workflow}
-              >
-                {workflow.display_name}
-              </Link>
         else
           <Link to={"/projects/#{@props.project.slug}/classify"} className="call-to-action standard-button">
             Get started!

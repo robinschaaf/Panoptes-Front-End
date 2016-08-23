@@ -4,37 +4,18 @@ import Dialog from 'modal-form/dialog';
 const WorkflowAssignmentDialog = React.createClass({
   statics: {
     start(history, location, preferences) {
-      // const WorkflowAssignmentDialog = this;
       return Dialog.alert(<WorkflowAssignmentDialog />, {
         className: 'workflow-assignment-dialog',
         closeButton: true,
-        onCancel: this.handleStayOnCurrentWorkflowAssignment.bind(null, location, preferences),
-        onSubmit: this.handleNewWorklfowAssignment.bind(null, history, location, preferences),
+        onSubmit: this.handleNewWorkflowAssignment.bind(null, history, location, preferences),
       });
     },
 
-    handleNewWorklfowAssignment(history, location, preferences) {
-      console.log('submit');
-      preferences.update({ 'preferences.selected_workflow': preferences.settings.workflow_id });
-      preferences.save()
-        .then(() =>
-          history.replace({
-            pathname: location.pathname,
-            search: `?workflow=${preferences.settings.workflow_id}`,
-          })
-        );
-    },
-
-    handleStayOnCurrentWorkflowAssignment(location, preferences) {
-      console.log('cancel');
-      // Switch user back to workflow in query rather than nero assigned workflow
-      // TODO: Maybe if user selects after 3 prompts, opt out?
-      if (preferences.selected_workflow === undefined || preferences.selected_workflow === null) {
-        preferences.update({ 'preferences.selected_workflow': location.query.workflow });
-        return preferences.save();
-      }
-
-      return null;
+    handleNewWorkflowAssignment(history, location, preferences) {
+      history.push({
+        pathname: location.pathname,
+        query: { workflow: preferences.settings.workflow_id },
+      });
     },
   },
 
